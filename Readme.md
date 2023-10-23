@@ -47,6 +47,31 @@ Für die Timestamps wäre folgende Information wichtig:
 
 Anmerkung: Es werden richtige Uhrzeit Daten gesendet.
 
+## UTC-Timestamp:
+110617.00
+
+Stunden(HH): 11
+Minuten(MM): 06
+Sekunden(SS): 17
+Bruchteile der Sekunde(SS.SS): 00
+
+## Umrechnen von UTC auf CET (Mitteleuropäische Zeitzone):
++1 Stunde
+
+Stunden(HH): 12
+Minuten(MM): 06
+Sekunden(SS): 17
+Bruchteile der Sekunde(SS.SS): 00
+
+## Umrechnen von UTC auf CEST (Mitteleuropäische Zeitzone - Sommerzeit):
++2 Stunden
+
+Stunden(HH): 13
+Minuten(MM): 06
+Sekunden(SS): 17
+Bruchteile der Sekunde(SS.SS): 00
+
+
 ## Nächste Schritte
 - Visualisieren der Daten mit Grafana (hat Arduino AddOn)
 - Daten in InfluxDB speichern sollte möglich sein
