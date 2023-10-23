@@ -1,5 +1,4 @@
 #include <HardwareSerial.h>
-#include <WiFi.h>
 
 HardwareSerial serial_port(2); // use UART2
 

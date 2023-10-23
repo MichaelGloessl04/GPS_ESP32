@@ -56,6 +56,6 @@ void loop(){
     }
   }
 
-  TCPclient.write('connected');
+  TCPclient.write('1');
   TCPclient.flush();
 }
