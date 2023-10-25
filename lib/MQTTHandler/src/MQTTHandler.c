@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "MQTTHandler.h"
 
 CustomMQTT::CustomMQTT(const char* ssid, const char* password, const char* mqtt_server) : client(espClient) {

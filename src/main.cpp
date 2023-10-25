@@ -1,7 +1,5 @@
 #include <HardwareSerial.h>
-#include <MQTTHandler.h>
 
-MQTTHandler mqtt("HTL Weiz", "HTL Weiz", "192.168.0.1");
 HardwareSerial serial_port(2); // use UART2
 
 /*
