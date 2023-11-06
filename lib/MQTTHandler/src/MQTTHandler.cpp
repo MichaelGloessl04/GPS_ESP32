@@ -1,12 +1,12 @@
 #include "MQTTHandler.h"
 
-CustomMQTT::CustomMQTT(const char* ssid, const char* password, const char* mqtt_server) : client(espClient) {
+MQTTHandler::MQTTHandler(const char* ssid, const char* password, const char* mqtt_server) : client(espClient) {
   this->ssid = ssid;
   this->password = password;
   this->mqtt_server = mqtt_server;
 }
 
-void CustomMQTT::setup_wifi() {
+void MQTTHandler::setup_wifi() {
   delay(10);
   Serial.println();
   Serial.print("Connecting to ");
@@ -25,7 +25,7 @@ void CustomMQTT::setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
-void CustomMQTT::callback(char* topic, byte* message, unsigned int length) {
+void MQTTHandler::callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Message arrived on topic: ");
   Serial.print(topic);
   Serial.print(". Message: ");
@@ -38,7 +38,7 @@ void CustomMQTT::callback(char* topic, byte* message, unsigned int length) {
   Serial.println();
 }
 
-void CustomMQTT::reconnect() {
+void MQTTHandler::reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
