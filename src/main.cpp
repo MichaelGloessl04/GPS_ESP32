@@ -6,6 +6,8 @@
 
 const char* ADR = "192.168.88.229";
 
+int counter = 0;
+
 HardwareSerial serial_port(2); // use UART2
 TinyGPSPlus gps;  
 ESP32Time rtc(3600);
@@ -34,7 +36,7 @@ void setup()
   pinMode(lichtschrnake, INPUT);
   wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
 
-  // set the time to the time i get from the gps (hour +2)
+  mqtt.setClientName("Test");
 }
 
 void setTime(){
@@ -55,12 +57,10 @@ void setTime(){
 }
 
 void loop(){
-
   if (!mqtt.client.connected()){
     mqtt.reconnect();
   }
 
-  
   while (serial_port.available() > 0){
     // get the byte data from the GPS
     // uint8_t gpsData = serial_port.read();
@@ -81,9 +81,10 @@ void loop(){
 
   if (started){
     // Serial.println(serial_port);
-    delay(1000);
-    mqtt.client.publish("BBB", myTime.c_str());
     myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
+    mqtt.client.publish("AAA", myTime.c_str());
     Serial.println(myTime);
   }
+
+  delay(1000);
 }

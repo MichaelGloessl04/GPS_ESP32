@@ -18,10 +18,14 @@ void MQTTHandler::callback(char* topic, byte* message, unsigned int length) {
   Serial.println();
 }
 
+void MQTTHandler::setClientName(const char* client_name) {
+  this->client_name = client_name;
+}
+
 void MQTTHandler::reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    if (client.connect("ESP32_Client_sensor", "admin", "ChallengeTiming23")) {
+    if (client.connect(client_name, "admin", "ChallengeTiming23")) {
       Serial.println("connected");
     } else {
       Serial.print("failed, rc=");
