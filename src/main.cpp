@@ -82,9 +82,7 @@ void loop(){
   if (started){
     // Serial.println(serial_port);
     myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
-    mqtt.client.publish("AAA", myTime.c_str());
+    mqtt.client.publish("AAA", myTime.c_str(), 2);
     Serial.println(myTime);
   }
-
-  delay(1000);
 }
