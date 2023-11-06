@@ -7,7 +7,6 @@
 class MQTTHandler {
   public:
     MQTTHandler(const char* ssid, const char* password, const char* mqtt_server);
-    void setup_wifi();
     void callback(char* topic, byte* message, unsigned int length);
     void reconnect();
     PubSubClient client;
