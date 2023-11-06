@@ -2,16 +2,12 @@
 #include <MQTTHandler.h>
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
-#include <string>
+#include <WiFiManager.h>
 
-const char* WIFI = "HTL-Weiz";
-const char* PWD = "HTL-Weiz";
-const char* ADR = "172.31.200.150";
+const char* ADR = "192.168.88.229";
 
-HardwareSerial serial_port(2); // use UART2
-TinyGPSPlus gps;
-ESP32Time rtc(3600);  // offset in seconds GMT+1
-MQTTHandler mqtt = MQTTHandler(WIFI, PWD, ADR);
+MQTTHandler mqtt = MQTTHandler(ADR);
+WiFiManager wifi;
 
 int hour = 0;
 int minute = 0;
@@ -81,4 +77,18 @@ void loop(){
   }
 }
 
-// make a jumper and conntect the gps sensors
+/*
+void setup()
+{
+  Serial.begin(115200);
+  wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
+}
+
+void loop(){
+  if (!mqtt.client.connected()){
+    mqtt.reconnect();
+  }
+
+  mqtt.client.publish("test", "tetetetet");
+}*/
+
