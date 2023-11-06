@@ -1,10 +1,16 @@
 #include <HardwareSerial.h>
+#include <MQTTHandler.h>
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
+
+const char* WIFI = "HTL-Weiz";
+const char* PWD = "HTL-Weiz";
+const char* ADR = "172.31.200.150";
 
 HardwareSerial serial_port(2); // use UART2
 TinyGPSPlus gps;
 ESP32Time rtc(3600);  // offset in seconds GMT+1
+MQTTHandler mqtt = MQTTHandler(WIFI, PWD, ADR);
 
 
 // $GPGGA: 3D location and accuracy data
