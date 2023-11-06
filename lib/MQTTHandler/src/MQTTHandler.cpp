@@ -4,6 +4,7 @@ MQTTHandler::MQTTHandler(const char* ssid, const char* password, const char* mqt
   this->ssid = ssid;
   this->password = password;
   this->mqtt_server = mqtt_server;
+  client.setServer(mqtt_server, 1883);
 }
 
 void MQTTHandler::setup_wifi() {
@@ -41,16 +42,12 @@ void MQTTHandler::callback(char* topic, byte* message, unsigned int length) {
 void MQTTHandler::reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
-    if (client.connect("ESP32_Client_sensor")) {
+    if (client.connect("ESP32_Client_sensor", "admin", "ChallengeTiming23")) {
       Serial.println("connected");
-      // Subscribe
-      //client.subscribe("esp32/output");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
       delay(5000);
     }
   }

@@ -3,59 +3,22 @@
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
 
-const char* WIFI = "HTL-Weiz";
-const char* PWD = "HTL-Weiz";
-const char* ADR = "172.31.200.150";
+const char* WIFI = "Atomkraftwerk-Sektor-6";
+const char* PWD = "healuwuu";
+const char* ADR = "192.168.88.229";
 
-HardwareSerial serial_port(2); // use UART2
-TinyGPSPlus gps;
-ESP32Time rtc(3600);  // offset in seconds GMT+1
 MQTTHandler mqtt = MQTTHandler(WIFI, PWD, ADR);
-
-
-// $GPGGA: 3D location and accuracy data
-
-int hour = 0;
-int minute = 0;
-int second = 0;
 
 void setup()  
 {
   Serial.begin(115200);
-
-  Serial.write("initializing GPS...");
-  serial_port.begin(9600, SERIAL_8N1, 16, 17);
-  Serial.write("Initialized");
-
-  // set the time to the time i get from the gps (hour +2)
-}
-
-void setTime(){
-
-  if (gps.encode(serial_port.read())){
-    hour = gps.time.hour() + 1;
-    minute = gps.time.minute();
-    second = gps.time.second();
-    Serial.print(hour);
-    Serial.print(",");
-    Serial.print(minute);
-    Serial.print(",");
-    Serial.println(second);
-
-  }
-
-  rtc.setTime(second, minute, hour, 17, 11, 2023);
+  mqtt.setup_wifi();
 }
 
 void loop(){
-  while (serial_port.available() > 0){
-    // get the byte data from the GPS
-    // uint8_t gpsData = serial_port.read();
-    // Serial.write(gpsData);
-
-    setTime();
+  if (!mqtt.client.connected()){
+    mqtt.reconnect();
   }
-  // Serial.println(serial_port);
-  Serial.print(rtc.getTime("%A, %B %d %Y %H:%M:%S, "));
-  Serial.println(rtc.getMillis());
+
+  mqtt.client.publish("test", "tetetetet");
 }
