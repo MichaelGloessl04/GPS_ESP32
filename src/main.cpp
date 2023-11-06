@@ -36,7 +36,7 @@ void setup()
   pinMode(lichtschrnake, INPUT);
   wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
 
-  mqtt.setClientName("Test_B");
+  mqtt.setClientName("Test_A");
 }
 
 void setTime(){
@@ -52,7 +52,6 @@ void setTime(){
     Serial.println(second);
 
   }
-
   rtc.setTime(second, minute, hour, 17, 11, 2023);
 }
 
@@ -83,9 +82,6 @@ void loop(){
     // Serial.println(serial_port);
     myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
     mqtt.client.publish("AAA", myTime.c_str(), 2);
-    Serial.println(myTime);
-
+    // Serial.println(myTime);
   }
-
-  delay(1000);
 }
