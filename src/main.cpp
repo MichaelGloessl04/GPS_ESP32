@@ -1,6 +1,8 @@
 #include <HardwareSerial.h>
+#include <MQTTHandler.h>
 
 HardwareSerial serial_port(2); // use UART2
+MQTTHandler ha = MQTTHandler();
 
 /*
 $GPGGA: 3D location and accuracy data
