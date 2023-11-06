@@ -13,6 +13,9 @@ int hour = 0;
 int minute = 0;
 int second = 0;
 
+const int lichtschrnake = 18;
+bool started = false;
+
 void setup()  
 {
   Serial.begin(115200);
@@ -21,13 +24,15 @@ void setup()
   serial_port.begin(9600, SERIAL_8N1, 16, 17);
   Serial.write("Initialized");
 
+  pinMode(lichtschrnake, INPUT);
+
   // set the time to the time i get from the gps (hour +2)
 }
 
 void setTime(){
 
   if (gps.encode(serial_port.read())){
-    hour = gps.time.hour() + 1;
+    hour = gps.time.hour();
     minute = gps.time.minute();
     second = gps.time.second();
     Serial.print(hour);
@@ -47,9 +52,23 @@ void loop(){
     // uint8_t gpsData = serial_port.read();
     // Serial.write(gpsData);
 
+    // do the synchronization
+
     setTime();
   }
-  // Serial.println(serial_port);
-  Serial.print(rtc.getTime("%A, %B %d %Y %H:%M:%S, "));
-  Serial.println(rtc.getMillis());
+
+  if (digitalRead(lichtschrnake) == HIGH && started == false){
+    started != started;
+  }
+  else if (digitalRead(lichtschrnake) == HIGH && started == true) {
+    started != started;
+  }
+
+  if (started){
+    // Serial.println(serial_port);
+    Serial.print(rtc.getTime("%A, %B %d %Y %H:%M:%S:"));
+    Serial.println(rtc.getMillis());
+  }
 }
+
+// make a jumper and conntect the gps sensors
