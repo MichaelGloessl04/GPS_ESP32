@@ -2,6 +2,7 @@
 #include <MQTTHandler.h>
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
+#include <string>
 
 const char* WIFI = "HTL-Weiz";
 const char* PWD = "HTL-Weiz";
@@ -12,15 +13,16 @@ TinyGPSPlus gps;
 ESP32Time rtc(3600);  // offset in seconds GMT+1
 MQTTHandler mqtt = MQTTHandler(WIFI, PWD, ADR);
 
-
-// $GPGGA: 3D location and accuracy data
-
 int hour = 0;
 int minute = 0;
 int second = 0;
 
 const int lichtschrnake = 18;
+int reading = LOW;
+int previous = LOW;
 bool started = false;
+
+String myTime;
 
 void setup()  
 {
@@ -38,7 +40,7 @@ void setup()
 void setTime(){
 
   if (gps.encode(serial_port.read())){
-    hour = gps.time.hour();
+    hour = gps.time.hour() + 1;
     minute = gps.time.minute();
     second = gps.time.second();
     Serial.print(hour);
@@ -53,6 +55,7 @@ void setTime(){
 }
 
 void loop(){
+
   while (serial_port.available() > 0){
     // get the byte data from the GPS
     // uint8_t gpsData = serial_port.read();
@@ -63,17 +66,18 @@ void loop(){
     setTime();
   }
 
-  if (digitalRead(lichtschrnake) == HIGH && started == false){
-    started != started;
+  reading = digitalRead(lichtschrnake); 
+
+  if (reading == HIGH && previous == LOW){
+    started = !started;
   }
-  else if (digitalRead(lichtschrnake) == HIGH && started == true) {
-    started != started;
-  }
+
+  previous = reading;
 
   if (started){
     // Serial.println(serial_port);
-    Serial.print(rtc.getTime("%A, %B %d %Y %H:%M:%S:"));
-    Serial.println(rtc.getMillis());
+    myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
+    Serial.println(myTime);
   }
 }
 
