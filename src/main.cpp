@@ -2,17 +2,17 @@
 #include <MQTTHandler.h>
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
+#include <WiFiManager.h>
 
-const char* WIFI = "Atomkraftwerk-Sektor-6";
-const char* PWD = "healuwuu";
 const char* ADR = "192.168.88.229";
 
-MQTTHandler mqtt = MQTTHandler(WIFI, PWD, ADR);
+MQTTHandler mqtt = MQTTHandler(ADR);
+WiFiManager wifi;
 
-void setup()  
+void setup()
 {
   Serial.begin(115200);
-  mqtt.setup_wifi();
+  wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
 }
 
 void loop(){

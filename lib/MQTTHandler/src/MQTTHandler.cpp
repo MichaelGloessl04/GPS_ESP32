@@ -1,29 +1,8 @@
 #include "MQTTHandler.h"
 
-MQTTHandler::MQTTHandler(const char* ssid, const char* password, const char* mqtt_server) : client(espClient) {
-  this->ssid = ssid;
-  this->password = password;
+MQTTHandler::MQTTHandler(const char* mqtt_server) : client(espClient) {
   this->mqtt_server = mqtt_server;
   client.setServer(mqtt_server, 1883);
-}
-
-void MQTTHandler::setup_wifi() {
-  delay(10);
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-
-  WiFi.begin(ssid, password);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
 }
 
 void MQTTHandler::callback(char* topic, byte* message, unsigned int length) {
@@ -31,7 +10,7 @@ void MQTTHandler::callback(char* topic, byte* message, unsigned int length) {
   Serial.print(topic);
   Serial.print(". Message: ");
   String messageTemp;
-  
+
   for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
