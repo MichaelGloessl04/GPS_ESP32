@@ -1,5 +1,6 @@
 #include <HardwareSerial.h>
 #include <MQTTHandler.h>
+#include <JSONHandler.h>
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
 #include <WiFiManager.h>
@@ -8,10 +9,11 @@ const char* ADR = "192.168.88.229";
 
 int counter = 0;
 
-HardwareSerial serial_port(2); // use UART2
+HardwareSerial serial_port(2);
 TinyGPSPlus gps;  
 ESP32Time rtc(3600);
 MQTTHandler mqtt = MQTTHandler(ADR);
+JSONHandler json = JSONHandler();
 WiFiManager wifi;
 
 int hour = 0;
@@ -25,6 +27,20 @@ bool started = false;
 
 String myTime;
 
+void setTime(){
+  if (gps.encode(serial_port.read())){
+    hour = gps.time.hour();
+    minute = gps.time.minute();
+    second = gps.time.second();
+    Serial.print(hour);
+    Serial.print(",");
+    Serial.print(minute);
+    Serial.print(",");
+    Serial.println(second);
+  }
+  rtc.setTime(second, minute, hour, 17, 11, 2023);
+}
+
 void setup()  
 {
   Serial.begin(115200);
@@ -36,37 +52,15 @@ void setup()
   pinMode(lichtschrnake, INPUT);
   wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
 
-  mqtt.setClientName("Test_A");
-}
-
-void setTime(){
-
-  if (gps.encode(serial_port.read())){
-    hour = gps.time.hour();
-    minute = gps.time.minute();
-    second = gps.time.second();
-    Serial.print(hour);
-    Serial.print(",");
-    Serial.print(minute);
-    Serial.print(",");
-    Serial.println(second);
-
-  }
-  rtc.setTime(second, minute, hour, 17, 11, 2023);
+  mqtt.setClientName();
 }
 
 void loop(){
-  if (!mqtt.client.connected()){
+  if (!mqtt.connected()){
     mqtt.reconnect();
   }
 
   while (serial_port.available() > 0){
-    // get the byte data from the GPS
-    // uint8_t gpsData = serial_port.read();
-    // Serial.write(gpsData);
-
-    // do the synchronization
-
     setTime();
   }
 
@@ -79,9 +73,8 @@ void loop(){
   previous = reading;
 
   if (started){
-    // Serial.println(serial_port);
     myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
-    mqtt.client.publish("AAA", myTime.c_str(), 2);
-    // Serial.println(myTime);
+    mqtt.publish(myTime.c_str());
+    Serial.println(myTime);
   }
 }
