@@ -9,7 +9,6 @@
 const char* ADR = "192.168.88.229";
 
 TaskHandle_t timeTaskHandle = NULL;
-TaskHandle_t timePublisherTaskHandle = NULL;
 
 HardwareSerial serial_port(2);
 TinyGPSPlus gps;  
@@ -35,29 +34,31 @@ void setTime(){
       hour = gps.time.hour();
       minute = gps.time.minute();
       second = gps.time.second();
-    } 
+    }
+
+    /* Serial.print(hour);
+    Serial.print(",");
+    Serial.print(minute);
+    Serial.print(",");
+    Serial.println(second); */  
 
     rtc.setTime(second, minute, hour, 17, 11, 2023);
-}
-
-void publishTime(void *args) {
-  mqtt.publish(myTime.c_str());
 }
 
 void recordTime(void *args) {
 
   while (1){
 
-    reading = digitalRead(lichtschrnake); 
-
-    if (reading == HIGH) { // && previous == LOW){
-      started = !started;
-      myTime = counter++ + rtc.getTime(": %A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
-      mqtt.publish(myTime.c_str());
-      Serial.println(myTime);
+    while (serial_port.available() > 0 ){
+      setTime();
     }
 
-    /*
+    reading = digitalRead(lichtschrnake); 
+
+    if (reading == HIGH && previous == LOW){
+      started = !started;
+    }
+
     previous = reading;
 
     if (started){
@@ -65,7 +66,6 @@ void recordTime(void *args) {
       mqtt.publish(myTime.c_str());
       Serial.println(myTime);
     }
-    */
   }
 }
 
@@ -85,11 +85,7 @@ void setup()
   for (int i = 0; i < 100; i++){
     setTime();
   }
-  xTaskCreatePinnedToCore( recordTime, "TimeRecorder", 4096, NULL, 25, &timeTaskHandle, 0); // task for getting time //core0 // highest
-  // task for connection just run until not connected // core1 ( in loop() )
-  // task for sending time // core1 // highest priority
-  xTaskCreatePinnedToCore( publishTime, "PublishTimer", 4096, NULL, 25, &timePublisherTaskHandle, 1);
-  // task for setting the time // core1
+  // xTaskCreatePinnedToCore( recordTime, "TimeRecorder", 4096, NULL, 25, &timeTaskHandle, 0);
 }
 
 void loop(){
