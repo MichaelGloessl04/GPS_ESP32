@@ -74,7 +74,7 @@ void loop(){
 
   if (started){
     myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
-    mqtt.client.publish("TimeData", myTime.c_str(), 2);
+    mqtt.publish(myTime.c_str());
     Serial.println(myTime);
   }
 }
