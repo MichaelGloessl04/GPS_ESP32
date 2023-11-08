@@ -48,3 +48,7 @@ void MQTTHandler::callback(char* topic, byte* message, unsigned int length) {
 void MQTTHandler::publish(const char* payload) {
   client.publish("TimeData", payload, 2);
 }
+
+bool MQTTHandler::connected() {
+  return client.connected();
+}

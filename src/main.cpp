@@ -56,7 +56,7 @@ void setup()
 }
 
 void loop(){
-  if (!mqtt.client.connected()){
+  if (!mqtt.connected()){
     mqtt.reconnect();
   }
 

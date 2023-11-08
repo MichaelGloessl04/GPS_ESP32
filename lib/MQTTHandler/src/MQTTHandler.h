@@ -10,6 +10,7 @@ class MQTTHandler {
     void callback(char* topic, byte* message, unsigned int length);
     void reconnect();
     void publish(const char* payload);
+    bool connected();
     void setClientName();
     const char* getClientName();
   private:
