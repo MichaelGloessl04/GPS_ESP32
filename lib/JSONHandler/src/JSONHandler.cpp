@@ -1,19 +1,13 @@
 #include <ArduinoJson.h>
 #include <JSONHandler.h>
 
-void JSONHandler::initJSON(const char* client_name) {
-    doc.clear();
-    doc["client"] = client_name;
-    json_data = doc.createNestedArray("measurements");
-}
-
-char* JSONHandler::getMsg(const char* client_name) {
-    char* msg;
-    serializeJson(doc, output);
-    output = "{\"data\":" + output + "}";
+const char* JSONHandler::newTimestamp(const char* client_name, int time, int team_id) {
+    String msg;
+    this->doc.clear();
+    this->doc["mac"] = client_name;
+    this->doc["time"] = time;
+    this->doc["team_id"] = team_id;
     
-    init_json(KEY);
-    return msg;
+    serializeJson(this->doc, msg);
+    return msg.c_str();
 }
-
-char*

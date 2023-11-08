@@ -5,13 +5,10 @@
 
 class JSONHandler {
   public:
-    void initJSON(const char* client_name);
-    void newMsg();
-    char* getMsg();
+    const char* newTimestamp(const char* client_name, int time, int team_id);
+    void getTeam(String teamJSON);
   private:
-    StaticJsonDocument<1024> doc;
-    JsonArray json_data;
-    JsonObject json_entry;
+    StaticJsonDocument<JSON_OBJECT_SIZE(3)> doc;
 };
 
 #endif
