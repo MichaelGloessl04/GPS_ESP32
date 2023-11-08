@@ -6,7 +6,7 @@
 class JSONHandler {
   public:
     const char* newTimestamp(const char* client_name, int time, int team_id);
-    void getTeam(String teamJSON);
+    int getTeam(String in_file, const char* mac);
   private:
     StaticJsonDocument<JSON_OBJECT_SIZE(3)> doc;
 };

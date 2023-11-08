@@ -5,7 +5,6 @@
 #include <TinyGPSPlus.h>
 #include <WiFiManager.h>
 
-/*
 const char* ADR = "192.168.88.229";
 
 int counter = 0;
@@ -78,16 +77,4 @@ void loop(){
     mqtt.publish(myTime.c_str());
     Serial.println(myTime);
   }
-}
-*/
-
-JSONHandler json = JSONHandler();
-
-void setup(){
-  Serial.begin(115200);
-  Serial.print(json.newTimestamp("jas", 0, 1));
-}
-
-void loop(){
-  
 }
