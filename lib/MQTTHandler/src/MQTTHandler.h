@@ -9,12 +9,15 @@ class MQTTHandler {
     MQTTHandler(const char* mqtt_server);
     void callback(char* topic, byte* message, unsigned int length);
     void reconnect();
-    void setClientName(const char* client_name);
-    PubSubClient client;
+    void publish(const char* payload);
+    bool connected();
+    void setClientName();
+    const char* getClientName();
   private:
     const char* client_name;
     const char* mqtt_server;
     WiFiClient espClient;
+    PubSubClient client;
 };
 
 #endif

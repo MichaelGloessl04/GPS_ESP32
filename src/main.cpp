@@ -10,7 +10,7 @@ const char* ADR = "192.168.88.229";
 
 TaskHandle_t timeTaskHandle = NULL;
 
-HardwareSerial serial_port(2); // use UART2
+HardwareSerial serial_port(2);
 TinyGPSPlus gps;  
 ESP32Time rtc(3600);
 MQTTHandler mqtt = MQTTHandler(ADR);
