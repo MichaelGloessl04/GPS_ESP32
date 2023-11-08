@@ -8,7 +8,7 @@ const char* ADR = "192.168.88.229";
 
 int counter = 0;
 
-HardwareSerial serial_port(2); // use UART2
+HardwareSerial serial_port(2);
 TinyGPSPlus gps;  
 ESP32Time rtc(3600);
 MQTTHandler mqtt = MQTTHandler(ADR);
@@ -24,20 +24,6 @@ int previous = LOW;
 bool started = false;
 
 String myTime;
-
-void setup()  
-{
-  Serial.begin(115200);
-
-  Serial.write("initializing GPS...");
-  serial_port.begin(9600, SERIAL_8N1, 16, 17);
-  Serial.write("Initialized");
-
-  pinMode(lichtschrnake, INPUT);
-  wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
-
-  mqtt.setClientName("Test_A");
-}
 
 void setTime(){
 
@@ -55,18 +41,26 @@ void setTime(){
   rtc.setTime(second, minute, hour, 17, 11, 2023);
 }
 
+void setup()  
+{
+  Serial.begin(115200);
+
+  Serial.write("initializing GPS...");
+  serial_port.begin(9600, SERIAL_8N1, 16, 17);
+  Serial.write("Initialized");
+
+  pinMode(lichtschrnake, INPUT);
+  wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
+
+  mqtt.setClientName();
+}
+
 void loop(){
-  if (!mqtt.client.connected()){
+  if (!mqtt.connected()){
     mqtt.reconnect();
   }
 
   while (serial_port.available() > 0){
-    // get the byte data from the GPS
-    // uint8_t gpsData = serial_port.read();
-    // Serial.write(gpsData);
-
-    // do the synchronization
-
     setTime();
   }
 
@@ -79,9 +73,8 @@ void loop(){
   previous = reading;
 
   if (started){
-    // Serial.println(serial_port);
     myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
-    mqtt.client.publish("AAA", myTime.c_str(), 2);
-    // Serial.println(myTime);
+    mqtt.publish(myTime.c_str());
+    Serial.println(myTime);
   }
 }
