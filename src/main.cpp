@@ -1,5 +1,6 @@
 #include <HardwareSerial.h>
 #include <MQTTHandler.h>
+#include <JSONHandler.h>
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
 #include <WiFiManager.h>
@@ -14,6 +15,7 @@ HardwareSerial serial_port(2);
 TinyGPSPlus gps;  
 ESP32Time rtc(3600);
 MQTTHandler mqtt = MQTTHandler(ADR);
+JSONHandler json = JSONHandler();
 WiFiManager wifi;
 
 int hour = 0;
@@ -28,7 +30,6 @@ bool started = false;
 String myTime;
 
 void setTime(){
-
   if (gps.encode(serial_port.read())){
     hour = gps.time.hour();
     minute = gps.time.minute();
