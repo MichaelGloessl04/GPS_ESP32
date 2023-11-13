@@ -3,6 +3,7 @@
 MQTTHandler::MQTTHandler(const char* mqtt_server) : client(espClient) {
   this->mqtt_server = mqtt_server;
   client.setServer(mqtt_server, 1883);
+  this->team_id = 0;
 }
 
 void MQTTHandler::setClientName() {
@@ -16,6 +17,14 @@ void MQTTHandler::setClientName() {
 
 const char* MQTTHandler::getClientName() {
   return this->client_name;
+}
+
+void MQTTHandler::setTeamId(int team_id) {
+  this->team_id = team_id;
+}
+
+int MQTTHandler::getTeamId() {
+  return this->team_id;
 }
 
 void MQTTHandler::reconnect() {
