@@ -1,6 +1,5 @@
 #include <HardwareSerial.h>
 #include <MQTTHandler.h>
-#include <JSONHandler.h>
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
 #include <WiFiManager.h>
@@ -8,16 +7,15 @@
 #include "freertos/task.h"
 #include <chro
 
-const char* ADR = "192.168.88.216";
+const char* ADR = "192.168.88.229";
 
 TaskHandle_t timeTaskHandle = NULL;
 TaskHandle_t timePublisherTaskHandle = NULL;
 
 HardwareSerial serial_port(2);
-TinyGPSPlus gps;
+TinyGPSPlus gps;  
 ESP32Time rtc(3600);
 MQTTHandler mqtt = MQTTHandler(ADR);
-JSONHandler json = JSONHandler();
 WiFiManager wifi;
 
 int hour = 0;
@@ -33,15 +31,20 @@ bool started = false;
 int counter = 0;
 String myTime;
 
-int team_id;
-
 void setTime(){
-  if (gps.encode(serial_port.read())){
-    hour = gps.time.hour();
-    minute = gps.time.minute();
-    second = gps.time.second();
-  }
-  rtc.setTime(second, minute, hour, 17, 11, 2023);
+
+    if (gps.encode(serial_port.read())){
+      hour = gps.time.hour();
+      minute = gps.time.minute();
+      second = gps.time.second();
+    } 
+
+    rtc.setTime(second, minute, hour, 17, 11, 2023);
+}
+
+void publishTime(void *args) {
+  mqtt.publish("myTime.c_str()");
+  mqtt.publish(myTime.c_str());
 }
 
 void recordTime(void *args) {
@@ -61,28 +64,9 @@ void recordTime(void *args) {
     if (started){
       myTime = counter++ + rtc.getTime(": %A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
       mqtt.publish(myTime.c_str());
-
-      myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
-      mqtt.publish(json.newTimestamp(mqtt.getClientName(), 0, team_id));
-
       Serial.println(myTime);
     }
     */
-  }
-}
-
-void callback(char* topic, byte* message, unsigned int length) {
-  Serial.print("Message arrived on topic: ");
-  Serial.print(topic);
-  Serial.print(". Message: ");
-  String charMessage;
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
-    charMessage += (char)message[i];
-  }
-  int new_id = json.getTeam(charMessage, mqtt.getClientName());
-  if (new_id > 0) {
-    team_id = new_id;
   }
 }
 
@@ -97,15 +81,37 @@ void setup()
   pinMode(lichtschrnake, INPUT);
   wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
 
-  xTaskCreatePinnedToCore(recordTime, "TimeRecorder", 4096, NULL, 25, &timeTaskHandle, 1);
-
   mqtt.setClientName();
-  mqtt.client.setCallback(callback);
+
+  for (int i = 0; i < 200; i++){
+    setTime();
+  }
+  Serial.write("FInished setting time");
+  xTaskCreatePinnedToCore( recordTime, "TimeRecorder", 4096, NULL, 25, &timeTaskHandle, 0); // task for getting time //core0 // highest
+  // task for connection just run until not connected // core1 ( in loop() )
+  
+  xTaskCreatePinnedToCore( publishTime, "PublishTimer", 4096, NULL, 25, &timePublisherTaskHandle, 1); // task for sending time // core1 // highest priority
+  // task for setting the time // core1
 }
 
 void loop(){
   if (!mqtt.connected()){
     mqtt.reconnect();
   }
-  mqtt.loop();
+  
+  /*
+  reading = digitalRead(lichtschrnake); 
+
+  if (reading == HIGH) {// && previous == LOW){
+    started = !started;
+    myTime = counter++ + rtc.getTime(": %A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
+    Serial.println(myTime);
+  }
+
+  previous = reading;
+
+  if (started){
+    mqtt.publish(myTime.c_str());
+  }
+  */
 }
