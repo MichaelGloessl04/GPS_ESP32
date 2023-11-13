@@ -11,13 +11,16 @@ class MQTTHandler {
     void publish(const char* payload);
     bool connected();
     void setClientName();
-    void loop();
     const char* getClientName();
+    void setTeamId(int new_id);
+    int getTeamId();
+    void loop();
     PubSubClient client;
   private:
     WiFiClient espClient;
     const char* client_name;
     const char* mqtt_server;
+    int team_id;
 };
 
 #endif
