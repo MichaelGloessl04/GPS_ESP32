@@ -23,6 +23,7 @@ void MQTTHandler::reconnect() {
     Serial.print("Attempting MQTT connection...");
     if (client.connect(client_name, "admin", "ChallengeTiming23")) {
       Serial.println("connected");
+      client.subscribe("set-team", 0);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -32,23 +33,14 @@ void MQTTHandler::reconnect() {
   }
 }
 
-void MQTTHandler::callback(char* topic, byte* message, unsigned int length) {
-  Serial.print("Message arrived on topic: ");
-  Serial.print(topic);
-  Serial.print(". Message: ");
-  String messageTemp;
-
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
-    messageTemp += (char)message[i];
-  }
-  Serial.println();
-}
-
 void MQTTHandler::publish(const char* payload) {
   client.publish("TimeData", payload, 2);
 }
 
 bool MQTTHandler::connected() {
   return client.connected();
+}
+
+void MQTTHandler::loop() {
+  this->client.loop();
 }
