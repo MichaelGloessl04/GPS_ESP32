@@ -24,7 +24,7 @@ int previous = LOW;
 bool started = false;
 
 int counter = 0;
-int myTime;
+String myTime;
 
 void setTime(){
   if (gps.encode(serial_port.read())){
@@ -38,9 +38,12 @@ void setTime(){
 void recordTime() {
   reading = digitalRead(lichtschranke); 
   if (reading == HIGH) {
-    myTime = rtc.getEpoch() * 1000 + rtc.getMillis();
+    myTime = String(rtc.getEpoch());
+    myTime += rtc.getMillis();
     Serial.println(myTime);
-    mqtt.publish(json.newTimestamp(mqtt.getClientName(), myTime, mqtt.getTeamId()));
+    mqtt.publish(json.newTimestamp(mqtt.getClientName(),
+                                   myTime,
+                                   mqtt.getTeamId()));
   }
 }
 
@@ -48,11 +51,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   String charMessage;
   int new_id;
 
-  Serial.print("Message arrived on topic: ");
-  Serial.print(topic);
-  Serial.print(". Message: ");
   for (int i = 0; i < length; i++) {
-    Serial.print((char)message[i]);
     charMessage += (char)message[i];
   }
 
