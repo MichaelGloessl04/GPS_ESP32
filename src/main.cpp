@@ -7,12 +7,12 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-const char* ADR = "192.168.88.229";
+const char* ADR = "192.168.88.216";
 
 TaskHandle_t timeTaskHandle = NULL;
 
 HardwareSerial serial_port(2);
-TinyGPSPlus gps;  
+TinyGPSPlus gps;
 ESP32Time rtc(3600);
 MQTTHandler mqtt = MQTTHandler(ADR);
 JSONHandler json = JSONHandler();
@@ -29,19 +29,14 @@ bool started = false;
 
 String myTime;
 
+int team_id;
+
 void setTime(){
   if (gps.encode(serial_port.read())){
     hour = gps.time.hour();
     minute = gps.time.minute();
     second = gps.time.second();
   }
-
-  /* Serial.print(hour);
-  Serial.print(",");
-  Serial.print(minute);
-  Serial.print(",");
-  Serial.println(second); */  
-
   rtc.setTime(second, minute, hour, 17, 11, 2023);
 }
 
@@ -62,9 +57,24 @@ void recordTime(void *args) {
 
     if (started){
       myTime = rtc.getTime("%A, %B %d %Y %H:%M:%S:") + rtc.getMillis();
-      mqtt.client.publish("BBB", myTime.c_str(), 2);
+      mqtt.publish(json.newTimestamp(mqtt.getClientName(), 0, team_id));
       Serial.println(myTime);
     }
+  }
+}
+
+void callback(char* topic, byte* message, unsigned int length) {
+  Serial.print("Message arrived on topic: ");
+  Serial.print(topic);
+  Serial.print(". Message: ");
+  String charMessage;
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)message[i]);
+    charMessage += (char)message[i];
+  }
+  int new_id = json.getTeam(charMessage, mqtt.getClientName());
+  if (new_id > 0) {
+    team_id = new_id;
   }
 }
 
@@ -79,13 +89,15 @@ void setup()
   pinMode(lichtschrnake, INPUT);
   wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
 
-  mqtt.setClientName("Test_B");
+  xTaskCreatePinnedToCore(recordTime, "TimeRecorder", 4096, NULL, 25, &timeTaskHandle, 1);
 
-  xTaskCreatePinnedToCore( recordTime, "TimeRecorder", 4096, NULL, 25, &timeTaskHandle, 1);
+  mqtt.setClientName();
+  mqtt.client.setCallback(callback);
 }
 
 void loop(){
-  if (!mqtt.client.connected()){
+  if (!mqtt.connected()){
     mqtt.reconnect();
   }
+  mqtt.loop();
 }
