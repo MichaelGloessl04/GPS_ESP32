@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 #include <JSONHandler.h>
 
-const char* JSONHandler::newTimestamp(const char* client_name, int time, int team_id) {
+const char* JSONHandler::newTimestamp(const char* client_name, String time, int team_id) {
     String msg;
     const char* out_msg;
     this->doc.clear();
