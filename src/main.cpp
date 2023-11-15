@@ -41,6 +41,25 @@ void setTime(){
   rtc.setTime(second, minute, hour, 17, 11, 2023);
 }
 
+void connectToWiFi() {
+  Serial.println("Connecting to WiFi...");
+
+  WiFi.begin(ssid, password);
+
+  int attemptCount = 0;
+  while (WiFi.status() != WL_CONNECTED && attemptCount < 20) {
+    delay(500);
+    Serial.print(".");
+    attemptCount++;
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nConnected to WiFi");
+  } else {
+    Serial.println("\nFailed to connect to WiFi. Please check your credentials.");
+  }
+}
+
 void setup()  
 {
   Serial.begin(115200);
@@ -50,7 +69,7 @@ void setup()
   Serial.write("Initialized");
 
   pinMode(lichtschrnake, INPUT);
-  wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
+  connectToWiFi();
 
   mqtt.setClientName();
 }
