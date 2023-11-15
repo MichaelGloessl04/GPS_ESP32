@@ -5,7 +5,7 @@
 #include <TinyGPSPlus.h>
 #include <WiFi.h>
 
-#define lichtschranke = 21
+#define lichtschranke 21
 
 String ADR = "192.168.88.216";
 
@@ -77,4 +77,5 @@ void setup()
 }
 
 void loop(){
+  recordTime();
 }
