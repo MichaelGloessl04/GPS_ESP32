@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 #include <JSONHandler.h>
 
-const char* JSONHandler::newTimestamp(const char* client_name, String time, int team_id) {
+String JSONHandler::newTimestamp(String client_name, String time, int team_id) {
     String msg;
     const char* out_msg;
     this->doc.clear();
@@ -14,7 +14,7 @@ const char* JSONHandler::newTimestamp(const char* client_name, String time, int 
     return out_msg;
 }
 
-int JSONHandler::getTeam(String in_file, const char* mac) {
+int JSONHandler::getTeam(String in_file, String mac) {
     const int capacity = JSON_OBJECT_SIZE(1000);
     DynamicJsonDocument doc(capacity);
     DeserializationError error = deserializeJson(doc, in_file);
@@ -24,9 +24,12 @@ int JSONHandler::getTeam(String in_file, const char* mac) {
 
     String macs = doc["macs"].as<String>();
     String team_id = doc["team_id"].as<String>();
+    Serial.print(macs);
+    Serial.print(mac);
+
     doc.clear();
 
-    if (macs.indexOf(mac) >= 0) {
+    if (macs.indexOf(mac) >= 0){
         return team_id.toInt();
     } else {
         return 0;

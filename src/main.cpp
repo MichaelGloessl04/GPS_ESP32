@@ -3,22 +3,21 @@
 #include <JSONHandler.h>
 #include <ESP32Time.h>
 #include <TinyGPSPlus.h>
-#include <WiFiManager.h>
+#include <WiFi.h>
 
-const char* ADR = "192.168.88.216";
+String ADR = "192.168.88.216";
 
 HardwareSerial serial_port(2);
 TinyGPSPlus gps;
 ESP32Time rtc(3600);
 MQTTHandler mqtt = MQTTHandler(ADR);
 JSONHandler json = JSONHandler();
-WiFiManager wifi;
 
 int hour = 0;
 int minute = 0;
 int second = 0;
 
-const int lichtschranke = 18;
+const int lichtschranke = 21;
 int reading = LOW;
 int previous = LOW;
 bool started = false;
@@ -52,7 +51,7 @@ void callback(char* topic, byte* message, unsigned int length) {
   int new_id;
 
   for (int i = 0; i < length; i++) {
-    charMessage += (char)message[i];
+    charMessage += message[i];
   }
 
   new_id = json.getTeam(charMessage, mqtt.getClientName());
@@ -66,13 +65,15 @@ void setup()
   Serial.begin(115200);
   serial_port.begin(9400, SERIAL_8N1, 16, 17);
 
-  pinMode(lichtschranke, INPUT);
-  for (size_t i = 0; i < 100; i++)
+  pinMode(lichtschranke, INPUT_PULLUP);
+  for (int i = 0; i < 100; i++)
   {
     setTime();
+    delay(100);
   }
+  Serial.println("time set");
 
-  wifi.autoConnect("Lichtschranken Wifi", "LichtschrankenPWD");
+  WiFi.begin("ZeroETime2G", "ChallangeTiming2023");
   mqtt.setClientName();
   mqtt.client.setCallback(callback);
 }
@@ -81,6 +82,6 @@ void loop(){
   if (!mqtt.connected()){
     mqtt.reconnect();
   }
-  recordTime();
-  mqtt.loop();
+  // recordTime();
+  // mqtt.loop();
 }
