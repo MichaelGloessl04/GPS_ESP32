@@ -4,7 +4,10 @@
 #include <TinyGPSPlus.h>
 #include <WiFiManager.h>
 
-const char* ADR = "192.168.88.229";
+const char* ADR = "10.10.90.249";
+
+const char* ssid = "ZeroETiming";
+const char* password = "ChallengeTiming23";
 
 int counter = 0;
 
