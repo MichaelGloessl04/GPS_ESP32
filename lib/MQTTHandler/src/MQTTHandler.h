@@ -6,20 +6,20 @@
 
 class MQTTHandler {
   public:
-    MQTTHandler(const char* mqtt_server);
+    MQTTHandler(String mqtt_server);
     void reconnect();
-    void publish(const char* payload);
+    void publish(String payload);
     bool connected();
     void setClientName();
-    const char* getClientName();
+    String getClientName();
     void setTeamId(int new_id);
     int getTeamId();
     void loop();
     PubSubClient client;
   private:
     WiFiClient espClient;
-    const char* client_name;
-    const char* mqtt_server;
+    String client_name;
+    String mqtt_server;
     int team_id;
 };
 
