@@ -74,15 +74,7 @@ void setup()
   }
   Serial.println("time set");
 
-  WiFi.begin("ZeroETime2G", "ChallangeTiming2023");
-  mqtt.setClientName();
-  mqtt.client.setCallback(callback);
 }
 
 void loop(){
-  if (!mqtt.connected()){
-    mqtt.reconnect();
-  }
-  // recordTime();
-  // mqtt.loop();
 }
