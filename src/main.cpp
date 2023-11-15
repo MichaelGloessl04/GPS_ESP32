@@ -5,6 +5,8 @@
 #include <TinyGPSPlus.h>
 #include <WiFi.h>
 
+#define lichtschranke = 21
+
 String ADR = "192.168.88.216";
 
 HardwareSerial serial_port(2);
@@ -17,7 +19,6 @@ int hour = 0;
 int minute = 0;
 int second = 0;
 
-const int lichtschranke = 21;
 int reading = LOW;
 int previous = LOW;
 bool started = false;
@@ -65,7 +66,7 @@ void setup()
   Serial.begin(115200);
   serial_port.begin(9400, SERIAL_8N1, 16, 17);
 
-  pinMode(lichtschranke, INPUT_PULLUP);
+  pinMode(lichtschranke, INPUT_PULLDOWN);
   for (int i = 0; i < 100; i++)
   {
     setTime();
