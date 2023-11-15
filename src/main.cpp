@@ -82,6 +82,6 @@ void loop(){
   if (!mqtt.connected()){
     mqtt.reconnect();
   }
-  // recordTime();
-  // mqtt.loop();
+  recordTime();
+  mqtt.loop();
 }
