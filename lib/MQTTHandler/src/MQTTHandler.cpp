@@ -1,17 +1,21 @@
 #include "MQTTHandler.h"
+#include "string.h"
 
 MQTTHandler::MQTTHandler(const char* mqtt_server) : client(espClient) {
   this->mqtt_server = mqtt_server;
   client.setServer(mqtt_server, 1883);
 }
 
-void MQTTHandler::setClientName() {
-  uint8_t mac[6];
+void MQTTHandler::setClientName(const char* client_name) {
+  /*uint8_t mac[6];
   WiFi.macAddress(mac);
-  char client_name[18];
-  snprintf(client_name, sizeof(client_name), "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-  const char* macChar = client_name;
-  client_name = client_name;
+  const char client_name[6];
+  for (size_t i = 0; i < sizeof(mac); i++)
+  {
+    client_name[i] = mac[i];
+  }*/
+  this->client_name = client_name;
+  Serial.print(this->client_name);
 }
 
 const char* MQTTHandler::getClientName() {
@@ -21,7 +25,7 @@ const char* MQTTHandler::getClientName() {
 void MQTTHandler::reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    if (client.connect(client_name, "admin", "ChallengeTiming23")) {
+    if (client.connect(this->client_name, "admin", "ChallengeTiming23")) {
       Serial.println("connected");
     } else {
       Serial.print("failed, rc=");
